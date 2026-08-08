@@ -1,0 +1,193 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system — minimal, product-dashboard inspired.
+ * Neutral paper surfaces + a single emerald accent.
+ * All colors are oklch tokens. Never hardcode colors in components.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --font-sans: "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --shadow-card: 0 1px 2px oklch(0.2 0.02 160 / 0.04), 0 8px 24px oklch(0.2 0.02 160 / 0.06);
+  --shadow-lift: 0 2px 6px oklch(0.2 0.02 160 / 0.06), 0 18px 40px oklch(0.2 0.02 160 / 0.1);
+}
+
+:root {
+  --radius: 0.875rem;
+  --background: oklch(0.985 0.004 145);
+  --foreground: oklch(0.21 0.015 160);
+  --surface: oklch(1 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.015 160);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.015 160);
+  --primary: oklch(0.62 0.14 158);
+  --primary-foreground: oklch(0.99 0.01 150);
+  --secondary: oklch(0.965 0.008 155);
+  --secondary-foreground: oklch(0.28 0.02 160);
+  --muted: oklch(0.965 0.006 155);
+  --muted-foreground: oklch(0.53 0.015 160);
+  --accent: oklch(0.95 0.03 158);
+  --accent-foreground: oklch(0.35 0.06 158);
+  --destructive: oklch(0.58 0.2 25);
+  --destructive-foreground: oklch(0.99 0.01 150);
+  --success: oklch(0.62 0.14 158);
+  --success-foreground: oklch(0.99 0.01 150);
+  --success-soft: oklch(0.95 0.04 158);
+  --warning: oklch(0.72 0.15 70);
+  --warning-soft: oklch(0.96 0.05 85);
+  --border: oklch(0.92 0.008 155);
+  --input: oklch(0.92 0.008 155);
+  --ring: oklch(0.62 0.14 158);
+  --sidebar: oklch(0.99 0.004 150);
+  --sidebar-foreground: oklch(0.21 0.015 160);
+  --sidebar-primary: oklch(0.62 0.14 158);
+  --sidebar-primary-foreground: oklch(0.99 0.01 150);
+  --sidebar-accent: oklch(0.95 0.03 158);
+  --sidebar-accent-foreground: oklch(0.35 0.06 158);
+  --sidebar-border: oklch(0.92 0.008 155);
+  --sidebar-ring: oklch(0.62 0.14 158);
+}
+
+.dark {
+  --background: oklch(0.17 0.012 165);
+  --foreground: oklch(0.96 0.006 150);
+  --surface: oklch(0.21 0.014 165);
+  --card: oklch(0.21 0.014 165);
+  --card-foreground: oklch(0.96 0.006 150);
+  --popover: oklch(0.21 0.014 165);
+  --popover-foreground: oklch(0.96 0.006 150);
+  --primary: oklch(0.72 0.15 158);
+  --primary-foreground: oklch(0.18 0.02 165);
+  --secondary: oklch(0.26 0.015 165);
+  --secondary-foreground: oklch(0.94 0.008 150);
+  --muted: oklch(0.25 0.013 165);
+  --muted-foreground: oklch(0.68 0.014 155);
+  --accent: oklch(0.29 0.04 160);
+  --accent-foreground: oklch(0.88 0.08 158);
+  --destructive: oklch(0.65 0.18 25);
+  --destructive-foreground: oklch(0.98 0.01 150);
+  --success: oklch(0.72 0.15 158);
+  --success-foreground: oklch(0.18 0.02 165);
+  --success-soft: oklch(0.28 0.05 160);
+  --warning: oklch(0.78 0.14 75);
+  --warning-soft: oklch(0.3 0.05 80);
+  --border: oklch(0.29 0.012 165);
+  --input: oklch(0.31 0.012 165);
+  --ring: oklch(0.72 0.15 158);
+  --sidebar: oklch(0.19 0.013 165);
+  --sidebar-foreground: oklch(0.96 0.006 150);
+  --sidebar-primary: oklch(0.72 0.15 158);
+  --sidebar-primary-foreground: oklch(0.18 0.02 165);
+  --sidebar-accent: oklch(0.28 0.03 160);
+  --sidebar-accent-foreground: oklch(0.88 0.08 158);
+  --sidebar-border: oklch(0.29 0.012 165);
+  --sidebar-ring: oklch(0.72 0.15 158);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--success-soft);
+    color: var(--accent-foreground);
+  }
+}
+
+/* Dotted connector texture from the reference layout */
+@utility dotted-rail {
+  background-image: radial-gradient(var(--color-border) 1px, transparent 1px);
+  background-size: 6px 6px;
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+@utility grid-canvas {
+  background-image:
+    linear-gradient(to right, var(--color-border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 75%);
+}
+
+@utility label-caps {
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-muted-foreground);
+}
+
+@utility panel {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-card);
+}
+
+@utility fade-in-up {
+  animation: fade-in-up 0.6s ease-out both;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
