@@ -1,6 +1,6 @@
 # YSOP — Your Storage at One Place
 
-YSOP is a file storage and sharing platform for developers and professionals. Upload a file, get a source link and a share link, organize everything into folders, and set an automatic expiry — or connect your own Cloudflare R2 bucket and manage it through the same workflow.
+YSOP v0 is a file storage and sharing platform for developers and professionals. Upload a file, get a source link and a share link, organize everything into folders, and set an automatic expiry — or connect your own Cloudflare R2 bucket and manage it through the same workflow.
 
 Live at [ysop.entospark.com](https://ysop.entospark.com).
 
