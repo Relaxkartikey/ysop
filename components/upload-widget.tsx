@@ -61,6 +61,46 @@ function shareUrl(slug: string) {
   return typeof window === "undefined" ? `/f/${slug}` : `${window.location.origin}/f/${slug}`;
 }
 
+/** Non-image extensions accepted from a clipboard paste — images are covered separately via MIME type. */
+const PASTE_ALLOWED_EXTENSIONS = new Set([
+  "pdf",
+  "doc",
+  "docx",
+  "txt",
+  "rtf",
+  "md",
+  "odt",
+  "xls",
+  "xlsx",
+  "csv",
+  "ods",
+  "ppt",
+  "pptx",
+  "odp",
+]);
+
+function isMajorFileType(file: File): boolean {
+  if (file.type.startsWith("image/")) return true;
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+  return PASTE_ALLOWED_EXTENSIONS.has(ext);
+}
+
+/** Handles both a real file copy (clipboard `.files`) and an image copy like a screenshot (`.items`). */
+function filesFromClipboard(data: DataTransfer | null): File[] {
+  if (!data) return [];
+  const files = Array.from(data.files ?? []);
+  if (files.length) return files;
+  return Array.from(data.items ?? [])
+    .filter((item) => item.kind === "file")
+    .map((item) => item.getAsFile())
+    .filter((f): f is File => f !== null);
+}
+
+function isEditableTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  return target.isContentEditable || target.tagName === "INPUT" || target.tagName === "TEXTAREA";
+}
+
 export function UploadWidget({ accept }: { accept?: string }) {
   const { user, loading } = useAuth();
   const staticPlan = PLANS.free;
@@ -228,12 +268,24 @@ export function UploadWidget({ accept }: { accept?: string }) {
   );
 
   const handleFiles = useCallback(
-    (list: FileList | null) => {
+    (list: FileList | File[] | null) => {
       if (!list) return;
       Array.from(list).forEach((f) => void uploadOne(f));
     },
     [uploadOne],
   );
+
+  useEffect(() => {
+    const onPaste = (e: ClipboardEvent) => {
+      if (isEditableTarget(e.target)) return;
+      const files = filesFromClipboard(e.clipboardData).filter(isMajorFileType);
+      if (files.length === 0) return;
+      e.preventDefault();
+      handleFiles(files);
+    };
+    window.addEventListener("paste", onPaste);
+    return () => window.removeEventListener("paste", onPaste);
+  }, [handleFiles]);
 
   const copy = async (slug: string) => {
     await navigator.clipboard.writeText(shareUrl(slug));
@@ -473,7 +525,8 @@ export function UploadWidget({ accept }: { accept?: string }) {
           </span>
           <p className="mt-3 text-sm font-medium">Drag &amp; drop files here</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            or click to browse — up to {formatBytes(maxFileSize)} per file
+            or click to browse, or paste (Ctrl/Cmd+V) an image or doc — up to{" "}
+            {formatBytes(maxFileSize)} per file
           </p>
           <input
             ref={inputRef}
