@@ -18,6 +18,7 @@ import {
   Sun,
   LogOut,
   LogIn,
+  Download,
 } from "lucide-react";
 import {
   Drawer,
@@ -29,6 +30,7 @@ import {
 } from "@/components/ui/drawer";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/lib/theme";
+import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { cn } from "@/lib/utils";
 import { GITHUB_REPO_URL } from "@/lib/site";
 
@@ -52,6 +54,7 @@ export function MobileBottomNav() {
   const pathname = usePathname();
   const { user, signOut } = useAuth();
   const { theme, toggle } = useTheme();
+  const { canInstall, promptToInstall } = useInstallPrompt();
 
   return (
     <nav
@@ -124,6 +127,18 @@ export function MobileBottomNav() {
                   )}
                   Theme
                 </button>
+                {canInstall && (
+                  <DrawerClose asChild>
+                    <button
+                      type="button"
+                      onClick={() => void promptToInstall()}
+                      className="flex items-center gap-2.5 rounded-lg border border-border px-3 py-3 text-sm font-medium"
+                    >
+                      <Download className="size-4 text-muted-foreground" />
+                      Install App
+                    </button>
+                  </DrawerClose>
+                )}
               </div>
 
               <div className="mt-4 border-t border-border pt-4">
