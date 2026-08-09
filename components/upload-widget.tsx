@@ -221,7 +221,12 @@ export function UploadWidget({ accept }: { accept?: string }) {
             xhr.status >= 200 && xhr.status < 300
               ? resolve()
               : reject(new Error(`Upload failed (${xhr.status})`));
-          xhr.onerror = () => reject(new Error("Network error during upload"));
+          xhr.onerror = () => {
+            // A personal bucket target with no readable status means the browser blocked the
+            // cross-origin request outright — almost always a missing CORS policy on the bucket.
+            const isPersonalNode = nodes.some((n) => n.id === start.storageNodeId);
+            reject(new Error(isPersonalNode ? "CORS_BLOCKED" : "Network error during upload"));
+          };
           xhr.onabort = () => reject(new Error("cancelled"));
           xhr.send(file);
         });
@@ -245,8 +250,23 @@ export function UploadWidget({ accept }: { accept?: string }) {
         void refreshNodes();
       } catch (err) {
         const message = err instanceof Error ? err.message : "Upload failed";
-        if (message === "cancelled") patch(id, { status: "cancelled" });
-        else {
+        if (message === "cancelled") {
+          patch(id, { status: "cancelled" });
+        } else if (message === "CORS_BLOCKED") {
+          patch(id, {
+            status: "error",
+            error: "Blocked by your bucket's CORS policy — see the fix guide",
+          });
+          toast.error("Upload blocked by your bucket's CORS policy", {
+            description:
+              "Your browser blocked the request. Add a CORS policy on your R2 bucket allowing this site, then try again.",
+            action: {
+              label: "View guide",
+              onClick: () =>
+                window.open("/docs/finding-r2-keys#5-set-the-buckets-cors-policy", "_blank"),
+            },
+          });
+        } else {
           patch(id, { status: "error", error: message });
           toast.error(message);
         }

@@ -29,11 +29,33 @@ Full reference: Cloudflare's [Authentication → API tokens](https://developers.
 
 After creating the token, Cloudflare shows the **Access Key ID** and **Secret Access Key** exactly once. Copy both immediately — the secret access key cannot be viewed again after you leave the page. If you lose it, delete the token and create a new one.
 
-## 5. Add the keys to YSOP
+## 5. Set the bucket's CORS policy
+
+When you upload to your own bucket, your browser sends the file **directly** to R2 using a short-lived signed URL — YSOP's server never touches the file bytes. Because that request comes from `https://ysop.entospark.com` and lands on `*.r2.cloudflarestorage.com`, it's cross-origin, so your bucket needs a CORS policy that allows it. Without this, uploads to your bucket will fail in the browser with a CORS error even though your credentials are correct.
+
+1. In the Cloudflare dashboard, open your bucket → **Settings** → **CORS Policy** → **Add CORS policy**.
+2. Use this JSON (replace the origin if you're self-hosting YSOP on a different domain):
+
+```json
+[
+  {
+    "AllowedOrigins": ["https://ysop.entospark.com"],
+    "AllowedMethods": ["PUT", "GET"],
+    "AllowedHeaders": ["Content-Type"],
+    "MaxAgeSeconds": 3600
+  }
+]
+```
+
+3. If you also use YSOP locally for development, add `http://localhost:3000` as an additional entry in `AllowedOrigins`.
+
+Full reference: Cloudflare's [Configure CORS for R2 buckets](https://developers.cloudflare.com/r2/buckets/cors/) guide.
+
+## 6. Add the keys to YSOP
 
 1. Go to **Settings → Storage** in YSOP.
 2. Enter your account ID, access key ID, and secret access key.
-3. YSOP tests the connection before saving it.
+3. YSOP tests the connection before saving it — this checks credentials and bucket access, but **does not** verify your CORS policy, so double-check step 5 if uploads fail after connecting.
 
 See [YSOP Storage](/docs/ysop-storage) for how storage quotas and per-upload storage selection work once your bucket is connected.
 
@@ -42,4 +64,5 @@ See [YSOP Storage](/docs/ysop-storage) for how storage quotas and per-upload sto
 - [R2 Object Storage overview](https://developers.cloudflare.com/r2/)
 - [Get started with R2](https://developers.cloudflare.com/r2/get-started/)
 - [Authentication and API tokens](https://developers.cloudflare.com/r2/api/tokens/)
+- [Configure CORS for R2 buckets](https://developers.cloudflare.com/r2/buckets/cors/)
 - [S3 API compatibility](https://developers.cloudflare.com/r2/api/s3/api/)

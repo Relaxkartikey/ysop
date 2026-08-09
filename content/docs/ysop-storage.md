@@ -13,6 +13,8 @@ YSOP (Your Storages at One Place) lets you connect your own Cloudflare R2 bucket
 
 Your credentials are encrypted at rest and are never displayed back to you or exposed to the browser after you save them — not even to you. If you need to change them, disconnect the node and reconnect with new credentials.
 
+Uploads go directly from your browser to your bucket, so your bucket also needs a CORS policy allowing YSOP's origin — see [Finding Your Cloudflare R2 Keys](/docs/finding-r2-keys#5-set-the-buckets-cors-policy) for the exact policy to add.
+
 ## Storage quota
 
 Each connected bucket gets a configurable quota, defaulting to 9 GB. You can raise or lower it from the same settings page. YSOP enforces this quota server-side before accepting an upload to that node.

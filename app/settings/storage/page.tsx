@@ -110,7 +110,14 @@ export default function StorageSettingsPage() {
       setForm(emptyForm);
       setShowConnectForm(false);
       qc.invalidateQueries({ queryKey: ["storage-nodes"] });
-      toast.success("Storage connected");
+      toast.success("Storage connected", {
+        description: "One more step: add a CORS policy on your bucket so uploads can reach it.",
+        action: {
+          label: "View guide",
+          onClick: () =>
+            window.open("/docs/finding-r2-keys#5-set-the-buckets-cors-policy", "_blank"),
+        },
+      });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -375,6 +382,21 @@ export default function StorageSettingsPage() {
                       connect.mutate();
                     }}
                   >
+                    <div className="flex items-start gap-2 rounded-lg bg-warning-soft px-3 py-2.5 text-xs text-foreground">
+                      <Lock className="mt-0.5 size-3.5 shrink-0" />
+                      <span>
+                        Uploads go straight from your browser to your bucket, so it needs a CORS
+                        policy allowing this site or uploads will fail.{" "}
+                        <Link
+                          href="/docs/finding-r2-keys#5-set-the-buckets-cors-policy"
+                          target="_blank"
+                          className="font-medium underline underline-offset-2"
+                        >
+                          See the guide
+                        </Link>
+                        .
+                      </span>
+                    </div>
                     <Input
                       placeholder="Display name (e.g. My R2)"
                       value={form.displayName}
