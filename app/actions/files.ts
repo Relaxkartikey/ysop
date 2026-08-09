@@ -32,6 +32,29 @@ import {
 
 const token = z.string().nullish();
 
+/** Accepts a bare domain (e.g. "pub-xxxx.r2.dev") by assuming https:// — the common way users type these in. */
+const optionalUrl = z.preprocess((v) => {
+  if (typeof v !== "string" || v.trim() === "") return null;
+  const trimmed = v.trim();
+  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+}, z.string().url("Enter a valid URL, e.g. https://cdn.example.com").nullable());
+
+/**
+ * A raw ZodError crossing the Server Action boundary renders as Next's generic,
+ * redacted production error — the user never sees which field was invalid. This
+ * turns validation failures into a plain, readable Error instead.
+ */
+function parseInput<T extends z.ZodTypeAny>(schema: T, input: unknown): z.infer<T> {
+  const result = schema.safeParse(input);
+  if (!result.success) {
+    const first = result.error.issues[0];
+    throw new Error(
+      first ? `${first.path.join(".") || "Input"}: ${first.message}` : "Invalid input",
+    );
+  }
+  return result.data;
+}
+
 export async function startUploadAction(input: unknown) {
   const data = z
     .object({
@@ -208,18 +231,19 @@ export async function listStorageNodesAction(input: unknown) {
 }
 
 export async function connectR2StorageNodeAction(input: unknown) {
-  const data = z
-    .object({
+  const data = parseInput(
+    z.object({
       displayName: z.string().min(1).max(100),
       bucket: z.string().min(1).max(100),
       region: z.string().max(100).nullish(),
-      publicBaseUrl: z.string().url().nullish(),
+      publicBaseUrl: optionalUrl,
       accountId: z.string().min(1).max(200),
       accessKeyId: z.string().min(1).max(200),
       secretAccessKey: z.string().min(1).max(200),
       accessToken: token,
-    })
-    .parse(input);
+    }),
+    input,
+  );
   return connectR2StorageNode(data);
 }
 
