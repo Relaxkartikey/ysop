@@ -770,11 +770,11 @@ export default function Dashboard() {
         <SiteHeader />
       </div>
       <main className="mx-auto max-w-7xl px-5 py-6 pb-28 md:py-12 md:pb-12">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex flex-col items-start gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl font-semibold tracking-tight">My files</h1>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
             <Button asChild variant="outline" size="sm">
               <Link href="/docs">
                 <BookOpen className="size-4" />

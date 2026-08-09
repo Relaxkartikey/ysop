@@ -11,6 +11,7 @@ import {
   LayoutGrid,
   LogOut,
   CreditCard,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -102,6 +103,11 @@ export function HomeHero() {
               <DropdownMenuItem asChild>
                 <Link href="/settings/storage">
                   <Cloud className="size-4" /> Storage Settings
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/docs">
+                  <BookOpen className="size-4" /> Help Docs
                 </Link>
               </DropdownMenuItem>
               <SubscriptionDialog>

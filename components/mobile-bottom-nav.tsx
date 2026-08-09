@@ -6,7 +6,7 @@ import {
   Home,
   Upload,
   FolderOpen,
-  Settings,
+  Cloud,
   MoreHorizontal,
   Info,
   BookOpen,
@@ -36,7 +36,7 @@ const PRIMARY_ITEMS = [
   { href: "/", label: "Home", icon: Home },
   { href: "/upload", label: "Upload", icon: Upload },
   { href: "/dashboard", label: "My Files", icon: FolderOpen },
-  { href: "/settings/storage", label: "Storage", icon: Settings },
+  { href: "/settings/storage", label: "Storage", icon: Cloud },
 ];
 
 const MORE_LINKS = [

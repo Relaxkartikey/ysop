@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
+  BookOpen,
   CheckCircle2,
   CloudUpload,
   Loader2,
@@ -155,11 +156,18 @@ export default function StorageSettingsPage() {
         <SiteHeader />
       </div>
       <main className="mx-auto max-w-2xl px-5 py-8 pb-28 md:py-12 md:pb-12">
-        <Button asChild variant="ghost" size="sm" className="-ml-2">
-          <Link href="/dashboard">
-            <ArrowLeft className="size-4" /> My Files
-          </Link>
-        </Button>
+        <div className="flex items-center justify-between gap-4">
+          <Button asChild variant="ghost" size="sm" className="-ml-2">
+            <Link href="/dashboard">
+              <ArrowLeft className="size-4" /> My Files
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="sm">
+            <Link href="/docs">
+              <BookOpen className="size-4" /> Help Docs
+            </Link>
+          </Button>
+        </div>
         <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="label-caps">Settings</div>
