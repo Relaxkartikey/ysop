@@ -27,8 +27,7 @@ export default function UploadPage() {
         <SiteHeader />
       </div>
       <main className="mx-auto max-w-2xl px-5 py-8 pb-28 md:py-16 md:pb-16">
-        <UploadWidget />
-        <div className="mt-5 hidden items-center justify-center gap-2 md:flex">
+        <div className="mb-5 hidden items-center justify-center gap-2 md:flex">
           <Button asChild variant="outline" size="sm">
             <Link href="/docs">
               <BookOpen className="size-4" />
@@ -48,6 +47,7 @@ export default function UploadPage() {
             </Link>
           </Button>
         </div>
+        <UploadWidget />
       </main>
       <div className="hidden md:block">
         <SiteFooter />
