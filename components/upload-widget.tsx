@@ -127,7 +127,9 @@ export function UploadWidget({ accept }: { accept?: string }) {
   const [isPermanent, setIsPermanent] = useState(false);
   const [folders, setFolders] = useState<FolderOption[]>([]);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
+  const [usageLoaded, setUsageLoaded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const userToggledPermanent = useRef(false);
 
   const planLabel = usage?.planLabel ?? staticPlan.label;
   const expiryOptions = usage?.capabilities.expiryOptions ?? staticPlan.expiryOptions;
@@ -151,6 +153,7 @@ export function UploadWidget({ accept }: { accept?: string }) {
   const refreshUsage = useCallback(async () => {
     const result = await getUsageAction(await withAuth({}));
     setUsage(result);
+    setUsageLoaded(true);
   }, []);
 
   useEffect(() => {
@@ -168,6 +171,15 @@ export function UploadWidget({ accept }: { accept?: string }) {
   useEffect(() => {
     if (canByos) void refreshNodes();
   }, [canByos, refreshNodes]);
+
+  // Once a connected bucket is confirmed, default new uploads to permanent — the
+  // whole point of BYOS is not relying on auto-delete. Never overrides a manual toggle.
+  useEffect(() => {
+    if (userToggledPermanent.current) return;
+    if (canByos && canPermanentLinks && nodesLoaded && nodes.length > 0) {
+      setIsPermanent(true);
+    }
+  }, [canByos, canPermanentLinks, nodesLoaded, nodes.length]);
 
   useEffect(() => {
     if (!canFolders) return;
@@ -332,7 +344,9 @@ export function UploadWidget({ accept }: { accept?: string }) {
       )
     : 0;
 
-  if (loading) {
+  const initializing = loading || (!!user && (!usageLoaded || (canByos && !nodesLoaded)));
+
+  if (initializing) {
     return (
       <div className="panel flex items-center justify-center overflow-hidden py-24">
         <Loader2 className="size-5 animate-spin text-muted-foreground" />
@@ -472,7 +486,10 @@ export function UploadWidget({ accept }: { accept?: string }) {
             <div className="mt-2.5 flex gap-2">
               <button
                 type="button"
-                onClick={() => setIsPermanent(false)}
+                onClick={() => {
+                  userToggledPermanent.current = true;
+                  setIsPermanent(false);
+                }}
                 className={cn(
                   "rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors",
                   !isPermanent
@@ -484,7 +501,10 @@ export function UploadWidget({ accept }: { accept?: string }) {
               </button>
               <button
                 type="button"
-                onClick={() => setIsPermanent(true)}
+                onClick={() => {
+                  userToggledPermanent.current = true;
+                  setIsPermanent(true);
+                }}
                 className={cn(
                   "rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors",
                   isPermanent
