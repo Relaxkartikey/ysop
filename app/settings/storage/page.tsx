@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
+import { ClaimProDialog } from "@/components/claim-pro-dialog";
 import { useAuth } from "@/hooks/useAuth";
 import { withAuth } from "@/lib/call-action";
 import {
@@ -199,9 +200,9 @@ export default function StorageSettingsPage() {
                 </Button>
               ) : (
                 !canByos && (
-                  <Button asChild size="sm">
-                    <Link href="/checkout">Go Pro</Link>
-                  </Button>
+                  <ClaimProDialog>
+                    <Button size="sm">Go Pro (Claim Free)</Button>
+                  </ClaimProDialog>
                 )
               )}
             </div>

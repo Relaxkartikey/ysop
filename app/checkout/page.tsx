@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { withAuth } from "@/lib/call-action";
 import { BILLING_PLANS, formatMoney } from "@/lib/billing-config";
 import { createCheckoutAction } from "@/app/actions/billing";
+import { getUsageAction } from "@/app/actions/files";
 import { cn } from "@/lib/utils";
 
 const PLAN_OPTIONS = [BILLING_PLANS.pro_monthly, BILLING_PLANS.pro_yearly];
@@ -21,6 +23,12 @@ export default function CheckoutPage() {
   const [planId, setPlanId] = useState<"pro_monthly" | "pro_yearly">("pro_monthly");
   const [phone, setPhone] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const usage = useQuery({
+    queryKey: ["usage", user?.id],
+    enabled: !loading && !!user,
+    queryFn: async () => getUsageAction(await withAuth({})),
+  });
 
   const startCheckout = async () => {
     if (!phone.trim()) {
@@ -45,6 +53,11 @@ export default function CheckoutPage() {
 
   if (!loading && !user) {
     router.replace("/auth");
+    return null;
+  }
+
+  if (usage.data?.capabilities.canByos === true) {
+    router.replace("/settings/storage");
     return null;
   }
 

@@ -10,6 +10,7 @@ import {
   Cloud,
   User as UserIcon,
   Github,
+  CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { YsopLogo } from "@/components/ysop-logo";
+import { SubscriptionDialog } from "@/components/subscription-dialog";
 import { useTheme } from "@/lib/theme";
 import { useAuth } from "@/hooks/useAuth";
 import { GITHUB_REPO_URL } from "@/lib/site";
@@ -76,6 +78,11 @@ export function SiteHeader() {
                     <Cloud className="size-4" /> Storage Settings
                   </Link>
                 </DropdownMenuItem>
+                <SubscriptionDialog>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <CreditCard className="size-4" /> Subscription
+                  </DropdownMenuItem>
+                </SubscriptionDialog>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-destructive focus:text-destructive"

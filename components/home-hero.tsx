@@ -10,6 +10,7 @@ import {
   User as UserIcon,
   LayoutGrid,
   LogOut,
+  CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SiteFooter } from "@/components/site-footer";
+import { SubscriptionDialog } from "@/components/subscription-dialog";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { YsopLogo } from "@/components/ysop-logo";
 import { HomeHeroMockup } from "@/components/home-hero-mockup";
@@ -101,6 +103,11 @@ export function HomeHero() {
                   <Cloud className="size-4" /> Storage Settings
                 </Link>
               </DropdownMenuItem>
+              <SubscriptionDialog>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  <CreditCard className="size-4" /> Subscription
+                </DropdownMenuItem>
+              </SubscriptionDialog>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="text-destructive focus:text-destructive"

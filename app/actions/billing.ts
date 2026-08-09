@@ -5,8 +5,33 @@ import { resolveOwner } from "@/server/files.server";
 import { createCheckoutForUser } from "@/server/billing/checkout.service";
 import { getPaymentByProviderOrderId } from "@/server/billing/subscription.service";
 import { getCurrentEntitlement } from "@/server/billing/entitlement.service";
+import { downgradeToFree, cancelSubscription } from "@/server/billing/billing.service";
+import { mockClaimTrial } from "@/server/billing/mock-events";
 
 const token = z.string().nullish();
+
+export async function claimFreeTrialAction(input: unknown) {
+  const data = z.object({ accessToken: token }).parse(input);
+  const owner = await resolveOwner(data.accessToken);
+  const entitlement = await getCurrentEntitlement(owner.userId);
+  if (entitlement.plan === "pro") throw new Error("You're already on Pro.");
+  await mockClaimTrial(owner.userId);
+  return { ok: true };
+}
+
+export async function cancelProAction(input: unknown) {
+  const data = z.object({ accessToken: token }).parse(input);
+  const owner = await resolveOwner(data.accessToken);
+  const entitlement = await getCurrentEntitlement(owner.userId);
+  if (entitlement.subscriptionId) {
+    // Real paid subscription — cancel at period end so Pro stays on until it lapses naturally.
+    await cancelSubscription(entitlement.subscriptionId, true);
+  } else {
+    // Manual/dev grant with no backing subscription — drop immediately.
+    await downgradeToFree(owner.userId, "manual");
+  }
+  return { ok: true };
+}
 
 export async function createCheckoutAction(input: unknown) {
   const data = z

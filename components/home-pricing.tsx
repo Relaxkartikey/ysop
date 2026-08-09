@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ClaimProDialog } from "@/components/claim-pro-dialog";
 
 const FREE_FEATURES = [
   "20 MB/file",
@@ -64,9 +65,9 @@ export function HomePricing() {
               </li>
             ))}
           </ul>
-          <Button asChild className="mt-6">
-            <Link href="/checkout">Go Pro</Link>
-          </Button>
+          <ClaimProDialog>
+            <Button className="mt-6">Go Pro (Claim Free)</Button>
+          </ClaimProDialog>
         </div>
       </div>
     </section>

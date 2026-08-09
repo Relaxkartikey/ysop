@@ -37,6 +37,36 @@ async function recordPayment(input: {
   if (error) safeDbError(error, "mock-events");
 }
 
+/** Free → Pending Pro → Active Pro for 3 months, no charge: same shape as mockSubscribe, $0 payment. */
+export async function mockClaimTrial(userId: string): Promise<string> {
+  const subscription = await createPendingSubscription({
+    userId,
+    provider: "mock",
+    providerSubscriptionId: `mock_trial_${crypto.randomUUID()}`,
+    plan: "pro",
+  });
+
+  const periodStart = new Date();
+  const periodEnd = new Date(periodStart);
+  periodEnd.setMonth(periodEnd.getMonth() + 3);
+
+  await recordPayment({
+    userId,
+    subscriptionId: subscription.id,
+    plan: { ...BILLING_PLANS.pro_monthly, amount: 0 },
+    status: "succeeded",
+  });
+  await billing.activatePro({
+    userId,
+    source: "subscription",
+    subscriptionId: subscription.id,
+    periodStart: periodStart.toISOString(),
+    periodEnd: periodEnd.toISOString(),
+  });
+
+  return subscription.id;
+}
+
 /** Free → Pending Pro → Active Pro, without a real charge: creates a subscription, records payment, activates Pro. */
 export async function mockSubscribe(userId: string, planId: "pro_monthly" | "pro_yearly") {
   const plan = BILLING_PLANS[planId];
@@ -50,7 +80,12 @@ export async function mockSubscribe(userId: string, planId: "pro_monthly" | "pro
   const periodStart = new Date().toISOString();
   const periodEnd = periodEndFor(plan, new Date());
 
-  await recordPayment({ userId, subscriptionId: subscription.id, plan, status: "succeeded" });
+  await recordPayment({
+    userId,
+    subscriptionId: subscription.id,
+    plan: { ...plan, amount: 0 },
+    status: "succeeded",
+  });
   await billing.activatePro({
     userId,
     source: "subscription",
