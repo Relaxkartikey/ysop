@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SiteFooter } from "@/components/site-footer";
 import { SubscriptionDialog } from "@/components/subscription-dialog";
+import { InstallPwaButton } from "@/components/install-pwa-button";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { YsopLogo } from "@/components/ysop-logo";
 import { HomeHeroMockup } from "@/components/home-hero-mockup";
@@ -108,6 +109,7 @@ export function HomeHero() {
                   <CreditCard className="size-4" /> Subscription
                 </DropdownMenuItem>
               </SubscriptionDialog>
+              <InstallPwaButton />
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="text-destructive focus:text-destructive"

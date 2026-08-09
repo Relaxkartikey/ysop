@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { YsopLogo } from "@/components/ysop-logo";
 import { SubscriptionDialog } from "@/components/subscription-dialog";
+import { InstallPwaButton } from "@/components/install-pwa-button";
 import { useTheme } from "@/lib/theme";
 import { useAuth } from "@/hooks/useAuth";
 import { GITHUB_REPO_URL } from "@/lib/site";
@@ -83,6 +84,7 @@ export function SiteHeader() {
                     <CreditCard className="size-4" /> Subscription
                   </DropdownMenuItem>
                 </SubscriptionDialog>
+                <InstallPwaButton />
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-destructive focus:text-destructive"

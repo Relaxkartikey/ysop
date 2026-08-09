@@ -16,6 +16,14 @@ out/
 build
 next-env.d.ts
 
+# next-pwa generated service worker output
+public/sw.js
+public/sw.js.map
+public/workbox-*.js
+public/workbox-*.js.map
+public/worker-*.js
+public/worker-*.js.map
+
 # Env files
 .env
 .env*.local

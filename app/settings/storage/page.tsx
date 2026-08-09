@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, CheckCircle2, CloudUpload, Loader2, Lock, LogIn, Plug, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  CheckCircle2,
+  CloudUpload,
+  Loader2,
+  Lock,
+  LogIn,
+  Plug,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
