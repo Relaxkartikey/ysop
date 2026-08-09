@@ -17,18 +17,26 @@ import {
 import { ClaimProDialog } from "@/components/claim-pro-dialog";
 import { useAuth } from "@/hooks/useAuth";
 import { withAuth } from "@/lib/call-action";
-import { getUsageAction } from "@/app/actions/files";
-import { cancelProAction } from "@/app/actions/billing";
+import { formatMoney } from "@/lib/billing-config";
+import { getSubscriptionDetailsAction, cancelProAction } from "@/app/actions/billing";
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
 
 export function SubscriptionDialog({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const { user, loading } = useAuth();
   const qc = useQueryClient();
 
-  const usage = useQuery({
-    queryKey: ["usage", user?.id],
+  const details = useQuery({
+    queryKey: ["subscription-details", user?.id],
     enabled: open && !loading && !!user,
-    queryFn: async () => getUsageAction(await withAuth({})),
+    queryFn: async () => getSubscriptionDetailsAction(await withAuth({})),
   });
 
   const cancel = useMutation({
@@ -36,13 +44,15 @@ export function SubscriptionDialog({ children }: { children: React.ReactNode }) 
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["usage"] });
       qc.invalidateQueries({ queryKey: ["storage-nodes"] });
+      qc.invalidateQueries({ queryKey: ["subscription-details"] });
       setOpen(false);
       toast.success("Subscription canceled");
     },
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const isPro = usage.data?.capabilities.canByos === true;
+  const isPro = details.data?.plan === "pro";
+  const subscription = details.data?.subscription ?? null;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -59,6 +69,32 @@ export function SubscriptionDialog({ children }: { children: React.ReactNode }) 
               : "Manage your YSOP Pro subscription."}
           </DialogDescription>
         </DialogHeader>
+
+        {isPro && subscription && (
+          <div className="space-y-2 rounded-lg border border-border bg-surface p-4 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Since</span>
+              <span className="font-medium">{formatDate(subscription.since)}</span>
+            </div>
+            {subscription.expiresAt && (
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">
+                  {subscription.cancelAtPeriodEnd ? "Active until" : "Renews / expires"}
+                </span>
+                <span className="font-medium">{formatDate(subscription.expiresAt)}</span>
+              </div>
+            )}
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Amount paid</span>
+              <span className="font-medium">
+                {subscription.amountCents !== null && subscription.currency
+                  ? formatMoney(subscription.amountCents, subscription.currency)
+                  : "—"}
+              </span>
+            </div>
+          </div>
+        )}
+
         <DialogFooter className="sm:flex-col sm:space-x-0 sm:space-y-2">
           {isPro ? (
             <Button

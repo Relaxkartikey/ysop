@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, CloudUpload, Loader2, Lock, LogIn, Plug, Trash2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, CloudUpload, Loader2, Lock, LogIn, Plug, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -146,7 +146,12 @@ export default function StorageSettingsPage() {
         <SiteHeader />
       </div>
       <main className="mx-auto max-w-2xl px-5 py-8 pb-28 md:py-12 md:pb-12">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+        <Button asChild variant="ghost" size="sm" className="-ml-2">
+          <Link href="/dashboard">
+            <ArrowLeft className="size-4" /> My Files
+          </Link>
+        </Button>
+        <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="label-caps">Settings</div>
             <h1 className="mt-1.5 text-3xl font-semibold tracking-tight">Storage</h1>
@@ -155,9 +160,6 @@ export default function StorageSettingsPage() {
               bucket instead of platform storage.
             </p>
           </div>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/dashboard">My Files</Link>
-          </Button>
         </div>
 
         {!loading && !user ? (

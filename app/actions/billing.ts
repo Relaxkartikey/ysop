@@ -3,7 +3,11 @@
 import { z } from "zod";
 import { resolveOwner } from "@/server/files.server";
 import { createCheckoutForUser } from "@/server/billing/checkout.service";
-import { getPaymentByProviderOrderId } from "@/server/billing/subscription.service";
+import {
+  getPaymentByProviderOrderId,
+  getSubscriptionById,
+  listPaymentsForUser,
+} from "@/server/billing/subscription.service";
 import { getCurrentEntitlement } from "@/server/billing/entitlement.service";
 import { downgradeToFree, cancelSubscription } from "@/server/billing/billing.service";
 import { mockClaimTrial } from "@/server/billing/mock-events";
@@ -17,6 +21,35 @@ export async function claimFreeTrialAction(input: unknown) {
   if (entitlement.plan === "pro") throw new Error("You're already on Pro.");
   await mockClaimTrial(owner.userId);
   return { ok: true };
+}
+
+export async function getSubscriptionDetailsAction(input: unknown) {
+  const data = z.object({ accessToken: token }).parse(input);
+  const owner = await resolveOwner(data.accessToken);
+  const entitlement = await getCurrentEntitlement(owner.userId);
+
+  if (entitlement.plan !== "pro" || !entitlement.subscriptionId) {
+    return { plan: entitlement.plan, subscription: null };
+  }
+
+  const subscription = await getSubscriptionById(entitlement.subscriptionId);
+  const payments = await listPaymentsForUser(owner.userId, 20);
+  const latestPayment = payments.find(
+    (p) => p.subscription_id === entitlement.subscriptionId && p.status === "succeeded",
+  );
+
+  return {
+    plan: "pro" as const,
+    subscription: subscription
+      ? {
+          since: subscription.current_period_start ?? subscription.created_at,
+          expiresAt: subscription.current_period_end,
+          cancelAtPeriodEnd: subscription.cancel_at_period_end,
+          amountCents: latestPayment?.amount_cents ?? null,
+          currency: latestPayment?.currency ?? null,
+        }
+      : null,
+  };
 }
 
 export async function cancelProAction(input: unknown) {

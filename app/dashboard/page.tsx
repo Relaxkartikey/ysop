@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Cloud,
   Copy,
+  BookOpen,
   Download,
   File as FileIcon,
   FileCode2,
@@ -774,6 +775,12 @@ export default function Dashboard() {
             <h1 className="text-3xl font-semibold tracking-tight">My files</h1>
           </div>
           <div className="flex items-center gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/docs">
+                <BookOpen className="size-4" />
+                Help Docs
+              </Link>
+            </Button>
             <Button asChild variant="outline" size="sm">
               <Link href="/settings/storage">
                 <Cloud className="size-4" />
